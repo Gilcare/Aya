@@ -21,32 +21,85 @@ model = WhisperModel(
 )
 
 
-def extract_patient(text):
+st.info("Please say:
 
-    patient = {}
+Name,
+Age,
+Gender,
+Hospital Number,
+Diagnosis.
 
-    patterns = {
-        "hospital_number": r"hospital number\s+(\d+)",
-        "name": r"name\s+(.+?)(?=age|male|female|diagnosis|$)",
-        "age": r"age\s+(\d+)",
-        "diagnosis": r"diagnosis\s+(.+)$"
+Example:
+"John Smith, age 54, male, hospital number 345678, diagnosis asthma."")
+
+
+
+import re
+
+def extract_fields(text: str):
+    """
+    Extract hospital number, age and gender from a transcript.
+
+    Examples:
+    - Jared Kushner, age 74, hospital number 36449968, diagnosis pneumonia
+    - John Smith, 56-year-old male, hospital no 12345678
+    - Hospital #987654, Jane Doe, female, 42 years old
+    """
+
+    patient = {
+        "hospital_number": None,
+        "age": None,
+        "gender": None
     }
 
-    for key, pattern in patterns.items():
-        match = re.search(pattern, text, re.I)
+    # -------------------------
+    # Hospital Number
+    # Matches:
+    # hospital number 12345
+    # hospital no 12345
+    # hospital #12345
+    # -------------------------
+    hospital_match = re.search(
+        r"hospital\s*(?:number|no\.?|#)\s*(\d+)",
+        text,
+        re.IGNORECASE
+    )
+
+    if hospital_match:
+        patient["hospital_number"] = hospital_match.group(1)
+
+    # -------------------------
+    # Age
+    # Matches:
+    # age 74
+    # 74 years old
+    # 74-year-old
+    # -------------------------
+    age_patterns = [
+        r"age\s*(\d{1,3})",
+        r"(\d{1,3})\s*years?\s*old",
+        r"(\d{1,3})[-\s]*year[-\s]*old"
+    ]
+
+    for pattern in age_patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
         if match:
-            patient[key] = match.group(1).strip()
+            patient["age"] = int(match.group(1))
+            break
 
-    patient["gender"] = ""
+    # -------------------------
+    # Gender
+    # -------------------------
+    gender_match = re.search(
+        r"\b(male|female)\b",
+        text,
+        re.IGNORECASE
+    )
 
-    if re.search(r"\bfemale\b", text, re.I):
-        patient["gender"] = "Female"
-
-    elif re.search(r"\bmale\b", text, re.I):
-        patient["gender"] = "Male"
+    if gender_match:
+        patient["gender"] = gender_match.group(1).title()
 
     return patient
-
 
 
 audio_file = st.audio_input("Record Data")
