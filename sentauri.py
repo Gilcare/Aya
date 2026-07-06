@@ -30,45 +30,40 @@ st.info("""Please say:
 \nExample:'John Smith, age 54, male, hospital number 345678, diagnosis asthma.'""")
 
 
+import re
 
 def extract_fields(text: str):
     """
-    Extract hospital number, age and gender from a transcript.
+    Extract patient details from a clinical transcript.
 
-    Examples:
-    - Jared Kushner, age 74, hospital number 36449968, diagnosis pneumonia
-    - John Smith, 56-year-old male, hospital no 12345678
-    - Hospital #987654, Jane Doe, female, 42 years old
+    Expected examples:
+    - Jared Kushner, age 74, male, hospital number 36449968, diagnosis pneumonia.
+    - Mary Jane Doe, 52-year-old female, hospital number 55667788, diagnosis pulmonary tuberculosis.
     """
 
     patient = {
-        "hospital_number": None,
+        "name": None,
         "age": None,
-        "gender": None
+        "gender": None,
+        "hospital_number": None,
+        "diagnosis": None
     }
 
     # -------------------------
-    # Hospital Number
-    # Matches:
-    # hospital number 12345
-    # hospital no 12345
-    # hospital #12345
+    # Name
+    # Everything before age or hospital number
     # -------------------------
-    hospital_match = re.search(
-        r"hospital\s*(?:number|no\.?|#)\s*(\d+)",
+    name_match = re.search(
+        r"^\s*(.+?)(?=,\s*(?:age|\d{1,3}-?year|hospital))",
         text,
         re.IGNORECASE
     )
 
-    if hospital_match:
-        patient["hospital_number"] = hospital_match.group(1)
+    if name_match:
+        patient["name"] = name_match.group(1).strip().title()
 
     # -------------------------
     # Age
-    # Matches:
-    # age 74
-    # 74 years old
-    # 74-year-old
     # -------------------------
     age_patterns = [
         r"age\s*(\d{1,3})",
@@ -94,7 +89,34 @@ def extract_fields(text: str):
     if gender_match:
         patient["gender"] = gender_match.group(1).title()
 
+    # -------------------------
+    # Hospital Number
+    # -------------------------
+    hospital_match = re.search(
+        r"hospital\s*(?:number|no\.?|#)\s*(\d+)",
+        text,
+        re.IGNORECASE
+    )
+
+    if hospital_match:
+        patient["hospital_number"] = hospital_match.group(1)
+
+    # -------------------------
+    # Diagnosis
+    # Everything after "diagnosis"
+    # -------------------------
+    diagnosis_match = re.search(
+        r"diagnosis[:,]?\s*(.+?)[.]?$",
+        text,
+        re.IGNORECASE
+    )
+
+    if diagnosis_match:
+        patient["diagnosis"] = diagnosis_match.group(1).strip().title()
+
     return patient
+
+
 
 
 audio_file = st.audio_input("Record Data")
