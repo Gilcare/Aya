@@ -1,5 +1,6 @@
 faster-whisper
 ffmpeg
+pandas
 regex
 streamlit
 torch
