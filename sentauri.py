@@ -31,8 +31,6 @@ st.info("""Please say:
 
 
 
-import re
-
 def extract_fields(text: str):
     """
     Extract hospital number, age and gender from a transcript.
@@ -119,7 +117,7 @@ if audio_file is not None:
 
     st.subheader("Full transcription")
     st.success(full_text)
-    data = extract_patient(full_text)
+    data = extract_fields(full_text)
     st.write(data)
 
 
