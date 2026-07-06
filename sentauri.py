@@ -4,6 +4,16 @@ import tempfile
 
 st.title("🫁 Aya", text_alignment = "center")
 
+@st.cache_resource
+def load_pipeline():
+    # Adding torch_dtype="auto" or "float16" speeds up GPU inference
+    return pipeline("text-generation", model="Qwen/Qwen2.5-0.5B-Instruct", dtype=torch.float16)
+pipe = load_pipeline()
+
+
+
+
+
 model = WhisperModel(
     "base",
     device="cpu",
