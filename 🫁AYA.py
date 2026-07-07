@@ -9,6 +9,7 @@ st.set_page_config(
 )
 
 st.title("🫁 Aya", text_alignment = "center")
+st.divider()
 
 records = list(patient_data.find({}, {"_id":0}))
 
