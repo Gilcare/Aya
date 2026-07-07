@@ -58,13 +58,6 @@ DIAGNOSES = [
 ]
 
 # Determine which diagnosis to pre-select
-"""current_diagnosis = st.session_state.get("diagnosis", "")
-
-if current_diagnosis in DIAGNOSES:
-    diagnosis_index = DIAGNOSES.index(current_diagnosis)
-else:
-    diagnosis_index = DIAGNOSES.index("Other")"""
-
 
 # -------------------------
 # Diagnosis
@@ -125,9 +118,9 @@ with st.form("Input Patient's Details", clear_on_submit=True):
     # If "Other" is selected, allow custom diagnosis entry
     if selected_diagnosis == "Other":
         st.text_input(
-            "Enter Diagnosis",
+            "Other Diagnosis",
             key="custom_diagnosis",
-            placeholder="e.g. Allergic Bronchopulmonary Aspergillosis"
+            placeholder="e.g. Hypertensive Heart Disease"
         )
         diagnosis = st.session_state.custom_diagnosis.strip()
     else:
