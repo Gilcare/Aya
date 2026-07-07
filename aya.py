@@ -55,7 +55,7 @@ DIAGNOSES = [
 ]
 
 # Determine which diagnosis to pre-select
-current_diagnosis = st.session_state.patient.get("diagnosis", "")
+current_diagnosis = st.session_state.get("diagnosis", "")
 
 if current_diagnosis in DIAGNOSES:
     diagnosis_index = DIAGNOSES.index(current_diagnosis)
