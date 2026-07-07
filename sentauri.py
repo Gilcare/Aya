@@ -211,7 +211,15 @@ else:
 
 st.divider()
 
-with st.form("Input Patient's Details", clear_on_submit=True):
+def clear_form():
+    st.session_state.name = ""
+    st.session_state.age = 0
+    st.session_state.gender = "Female"
+    st.session_state.hospital_number = ""
+    st.session_state.diagnosis = ""
+
+
+with st.form("Input Patient's Details", on_click=clear_form):
 
     name = st.text_input("Name", key="name")
 
