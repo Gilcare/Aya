@@ -1,6 +1,7 @@
 import re
 import streamlit as st
 import tempfile
+from datetime import date
 from faster_whisper import WhisperModel
 from pymongo import MongoClient
 
@@ -22,7 +23,8 @@ data = db["Patient_Data"]
 
 
 
-
+if "visit_date" not in st.session_state:
+    st.session_state.visit_date = date.today()
 # Input Data Via Text
 
 # List of common pulmonology diagnoses
@@ -97,6 +99,12 @@ with st.form("Input Patient's Details", clear_on_submit=True):
         index=diagnosis_index
     )
 
+    visit_date = st.date_input(
+        "Visit Date",
+        key="visit_date"
+    )
+
+    
     # Allow custom diagnosis
     if selected_diagnosis == "Other":
         diagnosis = st.text_input(
@@ -115,7 +123,8 @@ with st.form("Input Patient's Details", clear_on_submit=True):
             "age": age,
             "gender": gender,
             "hospital_number": hospital_number,
-            "diagnosis": diagnosis
+            "diagnosis": diagnosis,
+            "visit_date": st.session_state.visit_date,
         }
 
         data.insert_one(patient)
