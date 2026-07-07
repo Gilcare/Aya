@@ -52,6 +52,7 @@ DIAGNOSES = [
     "Pneumothorax",
     "Lymphangioleiomyomatosis",
     "Pulmonary Langerhans Cell Histiocytosis",
+    "Allergic Bronchopulmonary Aspergillosis",
     "Viral Pharyngitis",
     "Other"
 ]
